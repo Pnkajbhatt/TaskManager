@@ -10,9 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/Task")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class TaskController {
 
@@ -27,18 +28,21 @@ public class TaskController {
 
     @PostMapping("/tasks")
     public ResponseEntity<?> createTask(@RequestBody Task task){
-       Task savetask = taskService.saveTask(task);
-       if(savetask == null){
-           return new ResponseEntity<>("error occur",HttpStatus.BAD_REQUEST);
+       Optional<Task> savetask = taskService.saveTask(task);
+       if(savetask.isEmpty()){
+           return new ResponseEntity<>("Error: Task with this title already exists",HttpStatus.BAD_REQUEST);
        }
        return new ResponseEntity<>(savetask,HttpStatus.CREATED);
     }
 
 
     @GetMapping("/tasks")
-    public ResponseEntity<List<Task>> getAllTasks(){
+    public ResponseEntity<?> getAllTasks(){
         List<Task> data = taskService.GetAll();
-        return new ResponseEntity<>(data,HttpStatus.FOUND);
+        if(data == null){
+            return new ResponseEntity<>("Not found ",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(data,HttpStatus.OK);
     }
 
 
@@ -49,7 +53,7 @@ public class TaskController {
         if(data == null){
             return new ResponseEntity<>("Not found of id:"+ id ,HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(data,HttpStatus.FOUND);
+        return new ResponseEntity<>(data,HttpStatus.OK);
     }
 
 
@@ -58,6 +62,15 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(@PathVariable Long id){
         taskService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/tasks/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id){
+        Optional<Task> savetask = taskService.saveTask(task);
+        if(savetask.isEmpty()){
+            return new ResponseEntity<>("Error: Task with this title already exists",HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(savetask,HttpStatus.CREATED);
     }
 
 
