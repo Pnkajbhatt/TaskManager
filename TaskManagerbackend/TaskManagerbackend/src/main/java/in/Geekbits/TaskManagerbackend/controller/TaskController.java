@@ -1,16 +1,17 @@
 package in.Geekbits.TaskManagerbackend.controller;
 
 
+import in.Geekbits.TaskManagerbackend.DTO.CreateTaskRequest;
+import in.Geekbits.TaskManagerbackend.DTO.TaskResponse;
 import in.Geekbits.TaskManagerbackend.Service.TaskService;
 import in.Geekbits.TaskManagerbackend.entity.Task;
-import in.Geekbits.TaskManagerbackend.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.EntityResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -26,52 +27,32 @@ public class TaskController {
 
 
 
-    @PostMapping("/tasks")
-    public ResponseEntity<?> createTask(@RequestBody Task task){
-       Optional<Task> savetask = taskService.saveTask(task);
-       if(savetask.isEmpty()){
-           return new ResponseEntity<>("Error: Task with this title already exists",HttpStatus.BAD_REQUEST);
-       }
-       return new ResponseEntity<>(savetask,HttpStatus.CREATED);
+    @PostMapping("/task")
+    public ResponseEntity<TaskResponse> createTask(@RequestBody CreateTaskRequest request){
+        TaskResponse savetask = taskService.saveTask(request);
+        return new ResponseEntity<>(savetask,HttpStatus.CREATED);
     }
 
 
     @GetMapping("/tasks")
-    public ResponseEntity<?> getAllTasks(){
-        List<Task> data = taskService.GetAll();
-        if(data == null){
-            return new ResponseEntity<>("Not found ",HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<List<TaskResponse>> getAllTasks(){
+        List<TaskResponse> data = taskService.getAll();
         return new ResponseEntity<>(data,HttpStatus.OK);
     }
 
 
 
     @GetMapping("/tasks/{id}")
-    public ResponseEntity<?> getAllTasks(@PathVariable Long id){
-        Task data = taskService.getById(id);
-        if(data == null){
-            return new ResponseEntity<>("Not found of id:"+ id ,HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(data,HttpStatus.OK);
+    public ResponseEntity<TaskResponse> getAllTasks(@PathVariable Long id){
+        TaskResponse response = taskService.getTask(id);
+        return ResponseEntity.ok(response);
     }
 
 
 
-    @DeleteMapping("/tasks/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id){
-        taskService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 
-    @PutMapping("/tasks/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id){
-        Optional<Task> savetask = taskService.saveTask(task);
-        if(savetask.isEmpty()){
-            return new ResponseEntity<>("Error: Task with this title already exists",HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(savetask,HttpStatus.CREATED);
-    }
+
+
 
 
  }
