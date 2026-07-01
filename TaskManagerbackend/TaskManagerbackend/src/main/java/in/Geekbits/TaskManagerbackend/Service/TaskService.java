@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.function.EntityResponse;
 
@@ -35,6 +36,11 @@ public class TaskService {
 
 
     public TaskResponse saveTask(CreateTaskRequest request){
+        if(taskRepository.existsByTitle(request.title())){
+            throw new IllegalArgumentException("User already exist");
+        }
+
+
         Task task = new Task();
         task.setTitle(request.title());
         task.setDescription(request.description());
