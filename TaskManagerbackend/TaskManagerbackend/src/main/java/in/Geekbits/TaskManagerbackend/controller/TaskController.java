@@ -4,12 +4,10 @@ package in.Geekbits.TaskManagerbackend.controller;
 import in.Geekbits.TaskManagerbackend.DTO.CreateTaskRequest;
 import in.Geekbits.TaskManagerbackend.DTO.TaskResponse;
 import in.Geekbits.TaskManagerbackend.Service.TaskService;
-import in.Geekbits.TaskManagerbackend.entity.Task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.EntityResponse;
 
 import java.util.List;
 
@@ -50,8 +48,12 @@ public class TaskController {
 
 
 
-
-
+    @DeleteMapping("/tasks/{id}")
+    public ResponseEntity<?> deleteTask(@PathVariable Long id){
+        taskService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+    
 
 
 
